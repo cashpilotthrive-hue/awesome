@@ -60,6 +60,8 @@ Rails.application.routes.draw do
     end
   end
   
+  get '/dashboard', to: 'dashboard#index', as: :dashboard
+
   resources :exports, only: [:index], path: 'open-data'
 
   get '/404', to: 'errors#not_found'
