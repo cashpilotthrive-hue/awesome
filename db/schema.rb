@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_172132) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "llm_models", force: :cascade do |t|
+    t.boolean "api_available", default: false
+    t.integer "context_window"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "github_url"
+    t.string "license"
+    t.string "name", null: false
+    t.boolean "open_source", default: false
+    t.string "paper_url"
+    t.string "parameters"
+    t.string "provider"
+    t.date "release_date"
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["name"], name: "index_llm_models_on_name"
+    t.index ["provider"], name: "index_llm_models_on_provider"
+    t.index ["slug"], name: "index_llm_models_on_slug", unique: true
+  end
 
   create_table "list_projects", force: :cascade do |t|
     t.string "category"
