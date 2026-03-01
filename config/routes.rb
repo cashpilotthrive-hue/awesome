@@ -34,6 +34,8 @@ Rails.application.routes.draw do
         resources :lists, constraints: { id: /.*/ }, only: [:index]
         collection do
           get :lookup
+          get :packages
+          get :images
         end
         member do
           get :ping
