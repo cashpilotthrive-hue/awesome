@@ -260,6 +260,12 @@ class Project < ApplicationRecord
     readme_image_urls.select{|u| u.downcase.include?('license') }.any?
   end
 
+  def packages_licenses
+    return [] unless repository.present?
+    return [] unless repository['packages'].present?
+    Array(repository['packages']).map { |pkg| pkg['license'] }.compact.uniq
+  end
+
   def open_source_license?
     (packages_licenses + [repository_license] + [readme_license]).compact.uniq.any?
   end
@@ -271,6 +277,7 @@ class Project < ApplicationRecord
 
   def active?
     return false if archived?
+    true
   end
 
   def fork?
