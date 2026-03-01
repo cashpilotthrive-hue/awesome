@@ -166,10 +166,11 @@ class List < ApplicationRecord
     d.gsub!(/node\.?js/i, 'Node.js')
     # Vue.js
     d.gsub!(/vue\.?js/i, 'Vue.js')
-    # React.js / ReactJS -> React
-    d.gsub!(/react\.?js/i, 'React')
-    # Angular
+    # React.js / ReactJS / React -> React
+    d.gsub!(/\breact(?:\.?js)?\b/i, 'React')
+    # AngularJS / Angular.js -> AngularJS; standalone angular -> Angular
     d.gsub!(/angular\.?js/i, 'AngularJS')
+    d.gsub!(/\bangular\b/i, 'Angular')
     # jQuery
     d.gsub!(/jquery/i, 'jQuery')
     # GraphQL

@@ -123,6 +123,27 @@ class ListTest < ActiveSupport::TestCase
       assert_equal "Resources for Vue.js developers.", list.awesome_description
     end
 
+    should "normalize React variants" do
+      [
+        ["Resources for reactjs developers.", "Resources for React developers."],
+        ["Resources for react.js developers.", "Resources for React developers."],
+        ["Resources for react developers.", "Resources for React developers."]
+      ].each do |input, expected|
+        list = build(:list, description: input)
+        assert_equal expected, list.awesome_description, "Failed for input: #{input}"
+      end
+    end
+
+    should "normalize AngularJS variants" do
+      list = build(:list, description: "Resources for angularjs developers.")
+      assert_equal "Resources for AngularJS developers.", list.awesome_description
+    end
+
+    should "normalize standalone Angular" do
+      list = build(:list, description: "Resources for angular developers.")
+      assert_equal "Resources for Angular developers.", list.awesome_description
+    end
+
     should "normalize jQuery" do
       list = build(:list, description: "Resources for jquery developers.")
       assert_equal "Resources for jQuery developers.", list.awesome_description
@@ -143,6 +164,11 @@ class ListTest < ActiveSupport::TestCase
       assert_equal "Resources for MongoDB databases.", list.awesome_description
     end
 
+    should "normalize MySQL" do
+      list = build(:list, description: "Resources for mysql databases.")
+      assert_equal "Resources for MySQL databases.", list.awesome_description
+    end
+
     should "normalize Kubernetes" do
       list = build(:list, description: "Resources for kubernetes orchestration.")
       assert_equal "Resources for Kubernetes orchestration.", list.awesome_description
@@ -153,10 +179,15 @@ class ListTest < ActiveSupport::TestCase
       assert_equal "Resources for WordPress sites.", list.awesome_description
     end
 
+    should "normalize Docker" do
+      list = build(:list, description: "Resources for docker containers.")
+      assert_equal "Resources for Docker containers.", list.awesome_description
+    end
+
     should "remove URLs from description" do
       list = build(:list, description: "A list of resources at https://example.com for developers.")
       result = list.awesome_description
-      assert_not result.include?('https://example.com')
+      assert_no_match(/https?:\/\/\S+/, result)
     end
 
     should "not duplicate periods" do
