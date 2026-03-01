@@ -1,4 +1,6 @@
 class Api::V1::LlmModelsController < Api::V1::ApplicationController
+  ALLOWED_SORT_FIELDS = %w[name provider release_date context_window created_at updated_at].freeze
+
   def index
     scope = LlmModel.all
 
@@ -8,7 +10,7 @@ class Api::V1::LlmModelsController < Api::V1::ApplicationController
     scope = scope.with_api if params[:api_available] == 'true'
 
     if params[:sort].present? || params[:order].present?
-      sort = params[:sort].presence || 'name'
+      sort = ALLOWED_SORT_FIELDS.include?(params[:sort]) ? params[:sort] : 'name'
       if params[:order] == 'desc'
         scope = scope.order(Arel.sql(sort).desc.nulls_last)
       else
