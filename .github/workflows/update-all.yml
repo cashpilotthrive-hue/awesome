@@ -1,0 +1,44 @@
+name: Update All Dependencies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1" # Runs weekly on Monday
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependent libraries
+        run: sudo apt-get install libpq-dev
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: false
+        env:
+          RB_SYS_STABLE_API_COMPILED_FALLBACK: "true"
+
+      - name: Run bundle update
+        run: bundle update --jobs 4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update all Ruby dependencies"
+          title: "Update all Ruby dependencies"
+          body: |
+            Automated weekly update of all Ruby gem dependencies via `bundle update`.
+          branch: automated/bundle-update
+          delete-branch: true
+          labels: dependencies
