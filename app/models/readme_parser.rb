@@ -19,7 +19,7 @@ class ReadmeParser
   end
 
   def ignored_categories
-    ['Contents', 'Contributors', 'Artwork and License']
+    ['Contents', 'Contributors', 'Artwork and License', 'Table of Contents', 'License']
   end
 
   def links(category, sub_category)
@@ -38,57 +38,51 @@ class ReadmeParser
         category = line[3..-1].try(:strip)
         if ignored_categories.include?(category)
           current_category = nil
+          current_sub_category = nil
         else
           current_category = category
+          current_sub_category = nil
           links[current_category] ||= {}
         end
       elsif current_category && line.start_with?('### ')
         current_sub_category = line[4..-1].try(:strip)
         links[current_category][current_sub_category] ||= []
-      elsif current_category && line.include?('[') && line.include?('](')
-        link_text_start = line.index('[') + 1
-        link_text_end = line.index(']')
-        link_text = line[link_text_start...link_text_end]
-  
-        link_url_start = line.index('](') + 2
-        link_url_end = line.index(')', link_url_start)
-        link_url = line[link_url_start...link_url_end]
-  
-        if link_url_end && line.index('-', link_url_end)
-          description_start = line.index('-', link_url_end) + 1
-          description = line[description_start..-1].try(:strip)
-        else
-          description = nil
-        end
-
+      elsif current_category && line.start_with?('#### ')
+        current_sub_category = line[5..-1].try(:strip)
         links[current_category][current_sub_category] ||= []
-        links[current_category][current_sub_category] << { name: link_text.try(:strip), url: link_url.try(:strip), description: description.try(:strip) }
+      elsif current_category && line.include?('[') && line.include?('](')
+        link = extract_link(line)
+        links[current_category][current_sub_category] ||= []
+        links[current_category][current_sub_category] << link
       elsif line.start_with?('- ') && line.include?('[') && line.include?('](')
-        link_text_start = line.index('[') + 1
-        link_text_end = line.index(']')
-        link_text = line[link_text_start...link_text_end]
-
-        link_url_start = line.index('](') + 2
-        link_url_end = line.index(')', link_url_start)
-        link_url = line[link_url_start...link_url_end]
-
-        if link_url_end && line.index('-', link_url_end)
-          description_start = line.index('-', link_url_end) + 1
-          description = line[description_start..-1].try(:strip)
-        else
-          description = nil
-        end
-
+        link = extract_link(line)
         links['Uncategorized'] ||= {}
         links['Uncategorized']['Uncategorized'] ||= []
-        links['Uncategorized']['Uncategorized'] << { name: link_text.try(:strip), url: link_url.try(:strip), description: description.try(:strip) }
-      
-
-      
-      
+        links['Uncategorized']['Uncategorized'] << link
       end
     end
-  
+
     links
+  end
+
+  private
+
+  def extract_link(line)
+    link_text_start = line.index('[') + 1
+    link_text_end = line.index(']')
+    link_text = line[link_text_start...link_text_end]
+
+    link_url_start = line.index('](') + 2
+    link_url_end = line.index(')', link_url_start)
+    link_url = line[link_url_start...link_url_end]
+
+    if link_url_end && line.index('-', link_url_end)
+      description_start = line.index('-', link_url_end) + 1
+      description = line[description_start..-1].try(:strip)
+    else
+      description = nil
+    end
+
+    { name: link_text.try(:strip), url: link_url.try(:strip), description: description.try(:strip) }
   end
 end
