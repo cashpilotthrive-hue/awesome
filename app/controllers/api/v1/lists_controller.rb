@@ -50,9 +50,14 @@ class Api::V1::ListsController < Api::V1::ApplicationController
     raise ActionController::BadRequest.new('URL is required') unless params[:url].present?
     @list = List.find_by(url: params[:url].downcase)
     if @list.nil?
-      @project = List.create(url: params[:url].downcase)
-      @list.sync_async
+      begin
+        @list = List.create!(url: params[:url].downcase)
+      rescue ActiveRecord::RecordNotUnique
+        @list = List.find_by(url: params[:url].downcase)
+      end
+      @list&.sync_async
     end
+    raise ActiveRecord::RecordNotFound if @list.nil?
     @list.sync_async if @list.last_synced_at.nil? || @list.last_synced_at < 1.day.ago
     fresh_when(@list, public: true)
   end

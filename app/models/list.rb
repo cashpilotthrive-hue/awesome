@@ -161,11 +161,28 @@ class List < ApplicationRecord
     d.gsub!(/stackoverflow/i, 'Stack Overflow')
     # Nodejs should be Node.js
     d.gsub!(/Nodejs/i, 'Node.js')
+    # TypeScript proper casing
+    d.gsub!(/typescript/i, 'TypeScript')
+    # ReactJS/React.js should be React
+    d.gsub!(/React\.?js/i, 'React')
+    # VueJS/Vue.js should be Vue.js
+    d.gsub!(/vuejs/i, 'Vue.js')
+    # golang should be Go
+    d.gsub!(/\bgolang\b/i, 'Go')
+    # PostgreSQL proper casing
+    d.gsub!(/postgresql/i, 'PostgreSQL')
+    d.gsub!(/\bpostgres\b/i, 'PostgreSQL')
+    # GraphQL proper casing
+    d.gsub!(/graphql/i, 'GraphQL')
+    # iOS proper casing
+    d.gsub!(/\bios\b/, 'iOS')
+    # remove multiple spaces
+    d.gsub!(/  +/, ' ')
     # remove all new lines
     d.gsub!(/\n/, ' ')
     # remove all carriage returns
     d.gsub!(/\r/, ' ')
-    d
+    d.strip
   end
 
   def last_updated_at
