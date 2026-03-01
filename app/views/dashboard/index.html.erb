@@ -1,0 +1,108 @@
+<% @meta_title = "Dashboard" %>
+<% @meta_description = "Virtual dashboard showing all environments, functionalities and operations." %>
+
+<div class="container-md">
+  <h2 class="mb-4">Dashboard</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <h3 class="card-title display-6"><%= number_with_delimiter @lists_count %></h3>
+          <p class="card-text text-muted">Awesome Lists</p>
+          <%= link_to "Browse Lists", lists_path, class: "btn btn-sm btn-outline-primary" %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <h3 class="card-title display-6"><%= number_with_delimiter @projects_count %></h3>
+          <p class="card-text text-muted">Projects</p>
+          <%= link_to "Browse Projects", projects_path, class: "btn btn-sm btn-outline-primary" %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <h3 class="card-title display-6"><%= number_with_delimiter @topics_count %></h3>
+          <p class="card-text text-muted">Topics</p>
+          <%= link_to "Browse Topics", topics_path, class: "btn btn-sm btn-outline-primary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Recently Added Lists</div>
+        <ul class="list-group list-group-flush">
+          <% @recent_lists.each do |list| %>
+            <li class="list-group-item">
+              <%= link_to list.to_s, list_path(list) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Top Languages</div>
+        <ul class="list-group list-group-flush">
+          <% @top_languages.each do |language, count| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <%= link_to language, lists_path(language: language) %>
+              <span class="badge bg-primary rounded-pill"><%= number_with_delimiter count %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">Operations</div>
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-auto">
+              <%= link_to "API Docs", "/docs", class: "btn btn-outline-secondary btn-sm" %>
+            </div>
+            <div class="col-auto">
+              <%= link_to "Open Data", exports_path, class: "btn btn-outline-secondary btn-sm" %>
+            </div>
+            <div class="col-auto">
+              <%= link_to "RSS Feed", lists_path(format: :rss), class: "btn btn-outline-secondary btn-sm" %>
+            </div>
+            <div class="col-auto">
+              <%= link_to "Markdown Export", markdown_lists_path, class: "btn btn-outline-secondary btn-sm" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="mb-3">Ecosyste.ms Environments</h3>
+  <% ecosystems_services.each do |category, services| %>
+    <div class="mb-4">
+      <h5 class="text-muted mb-2"><%= category %></h5>
+      <div class="row g-2">
+        <% services.each do |service| %>
+          <div class="col-6 col-md-3 col-lg-2">
+            <a href="<%= service[:url] %>" target="_blank"
+               class="card text-decoration-none <%= 'border-primary' if service[:url] == request.base_url %>">
+              <div class="card-body py-2 px-3">
+                <p class="mb-0 small fw-semibold"><%= service[:name] %></p>
+                <p class="mb-0 text-muted" style="font-size:0.7rem;"><%= service[:url].sub('https://', '') %></p>
+              </div>
+            </a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
