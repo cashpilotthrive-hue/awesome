@@ -133,38 +133,67 @@ class List < ApplicationRecord
 
   def awesome_description
     return if description.blank?
-    # add a period if there isn't one
     d = description.dup
     # remove whitespace from start and end
     d.strip!
     # add a period if there isn't one
-    d = description[-1] == '.' ? description : "#{description}."
+    d = d[-1] == '.' ? d : "#{d}."
     # start with a capital letter
     d[0] = d[0].capitalize
-    # Should not repeat "."  or "!" more than once 
+    # Should not repeat "."  or "!" more than once
     d.gsub!(/([.!?])\1+/, '\1')
     # remove extra urls (e.g. http://example.com)
     d.gsub!(/https?:\/\/\S+/, '')
     # proper case for "GitHub"
     d.gsub!(/github/i, 'GitHub')
+    # proper case for "GitLab"
+    d.gsub!(/gitlab/i, 'GitLab')
     # proper case for "JavaScript"
     d.gsub!(/javascript/i, 'JavaScript')
+    # proper case for "TypeScript"
+    d.gsub!(/typescript/i, 'TypeScript')
     # OSX should be macOS
-    d.gsub!(/MacOS/, 'macOS')
-    d.gsub!(/OS X/, 'macOS')
-    d.gsub!(/Mac OS X/, 'macOS')
-    d.gsub!(/OSX/, 'macOS')
+    d.gsub!(/Mac OS X/i, 'macOS')
+    d.gsub!(/OS X/i, 'macOS')
+    d.gsub!(/MacOS/i, 'macOS')
+    d.gsub!(/OSX/i, 'macOS')
     d.gsub!(/Mac macOS/, 'macOS')
-    # youtube should be YouTube
+    # YouTube
     d.gsub!(/youtube/i, 'YouTube')
-    # stackoverflow should be Stack Overflow
+    # Stack Overflow
     d.gsub!(/stackoverflow/i, 'Stack Overflow')
-    # Nodejs should be Node.js
-    d.gsub!(/Nodejs/i, 'Node.js')
+    # Node.js
+    d.gsub!(/node\.?js/i, 'Node.js')
+    # Vue.js
+    d.gsub!(/vue\.?js/i, 'Vue.js')
+    # React.js / ReactJS / React -> React
+    d.gsub!(/\breact(?:\.?js)?\b/i, 'React')
+    # AngularJS / Angular.js -> AngularJS; standalone angular -> Angular
+    d.gsub!(/angular\.?js/i, 'AngularJS')
+    d.gsub!(/\bangular\b/i, 'Angular')
+    # jQuery
+    d.gsub!(/jquery/i, 'jQuery')
+    # GraphQL
+    d.gsub!(/graphql/i, 'GraphQL')
+    # PostgreSQL
+    d.gsub!(/postgresql/i, 'PostgreSQL')
+    # MySQL
+    d.gsub!(/mysql/i, 'MySQL')
+    # MongoDB
+    d.gsub!(/mongodb/i, 'MongoDB')
+    # Kubernetes
+    d.gsub!(/kubernetes/i, 'Kubernetes')
+    # Docker
+    d.gsub!(/\bdocker\b/i, 'Docker')
+    # WordPress
+    d.gsub!(/wordpress/i, 'WordPress')
     # remove all new lines
     d.gsub!(/\n/, ' ')
     # remove all carriage returns
     d.gsub!(/\r/, ' ')
+    # collapse multiple spaces
+    d.gsub!(/  +/, ' ')
+    d.strip!
     d
   end
 
@@ -563,7 +592,9 @@ class List < ApplicationRecord
 
   IGNORED_CATEGORIES = ['license', 'other', 'miscellaneous', 'misc', 'related', "other awesome lists", "related lists", 'contributing',
                         'footnotes', "table of contents", 'others', 'uncategorized', 'projects', 'software', 'other lists', 'general',
-                        'official resources', 'other resources']
+                        'official resources', 'other resources', 'acknowledgements', 'acknowledgments', 'credits', 'thanks',
+                        'support', 'contact', 'about', 'introduction', 'overview', 'references', 'links', 'notes',
+                        'additional resources', 'see also', 'further reading', 'external links', 'appendix']
 
   def self.categories
     List.displayable
