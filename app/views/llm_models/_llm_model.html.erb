@@ -1,0 +1,37 @@
+<div class="card mb-3 llm-model d-flex" id="llm_model_<%= llm_model.id %>">
+  <div class="card-body pb-1">
+    <div class="d-flex">
+      <div class="flex-grow-1 ms-3 text-break">
+        <h5 class='card-title'>
+          <%= link_to llm_model.name, llm_model_path(llm_model) %>
+          <% if llm_model.provider.present? %>
+            <small class="text-muted">by <%= llm_model.provider %></small>
+          <% end %>
+        </h5>
+
+        <% if llm_model.description.present? %>
+          <p class="card-subtitle mb-2 text-muted">
+            <%= truncate(llm_model.description, length: 200) %>
+          </p>
+        <% end %>
+
+        <p class="card-subtitle mb-2 text-muted">
+          <i><small>
+            <% if llm_model.parameters.present? %>
+              <%= llm_model.parameters %> parameters
+            <% end %>
+            <% if llm_model.context_window.present? %>
+              - <%= number_with_delimiter llm_model.context_window %> token context
+            <% end %>
+            <% if llm_model.open_source? %>
+              - <span class="badge bg-success">Open Source</span>
+            <% end %>
+            <% if llm_model.api_available? %>
+              - <span class="badge bg-info">API</span>
+            <% end %>
+          </small></i>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
