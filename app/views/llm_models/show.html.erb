@@ -1,0 +1,43 @@
+<% @meta_title = "#{@llm_model}" %>
+
+<div class="container-md">
+  <h1>
+    <%= @llm_model.name %>
+  </h1>
+
+  <% if @llm_model.description.present? %>
+    <p class="lead"><%= @llm_model.description %></p>
+  <% end %>
+
+  <ul>
+    <% if @llm_model.provider.present? %>
+      <li>Provider: <%= @llm_model.provider %></li>
+    <% end %>
+    <% if @llm_model.parameters.present? %>
+      <li>Parameters: <%= @llm_model.parameters %></li>
+    <% end %>
+    <% if @llm_model.context_window.present? %>
+      <li>Context Window: <%= number_with_delimiter @llm_model.context_window %> tokens</li>
+    <% end %>
+    <% if @llm_model.license.present? %>
+      <li>License: <%= @llm_model.license %></li>
+    <% end %>
+    <li>Open Source: <%= @llm_model.open_source? ? 'Yes' : 'No' %></li>
+    <li>API Available: <%= @llm_model.api_available? ? 'Yes' : 'No' %></li>
+    <% if @llm_model.url.present? %>
+      <li>URL: <%= link_to @llm_model.url, @llm_model.url, target: :_blank %></li>
+    <% end %>
+    <% if @llm_model.github_url.present? %>
+      <li>GitHub: <%= link_to @llm_model.github_url, @llm_model.github_url, target: :_blank %></li>
+    <% end %>
+    <% if @llm_model.paper_url.present? %>
+      <li>Paper: <%= link_to @llm_model.paper_url, @llm_model.paper_url, target: :_blank %></li>
+    <% end %>
+    <% if @llm_model.release_date.present? %>
+      <li>Release Date: <%= @llm_model.release_date %></li>
+    <% end %>
+    <li>
+      <%= link_to 'JSON Representation', api_v1_llm_model_path(@llm_model) %>
+    </li>
+  </ul>
+</div>

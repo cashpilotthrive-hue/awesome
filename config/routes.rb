@@ -23,6 +23,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :llm_models, only: [:index, :show]
+
       resources :lists, constraints: { id: /.*/ }, only: [:index, :show] do
         resources :list_projects, only: [:index]
         resources :projects, constraints: { id: /.*/ }, only: [:index]
@@ -59,6 +61,8 @@ Rails.application.routes.draw do
       get :suggestions
     end
   end
+
+  resources :llm_models, only: [:index, :show]
   
   resources :exports, only: [:index], path: 'open-data'
 
