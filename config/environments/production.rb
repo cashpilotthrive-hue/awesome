@@ -73,5 +73,8 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  config.hosts << "echomi.com"
+  config.hosts << "www.echomi.com"
+
   config.secret_key_base = '<%= ENV["SECRET_KEY_BASE"] %>'
 end
