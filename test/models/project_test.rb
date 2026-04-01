@@ -159,4 +159,71 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal "TestOwner", project.owner
     assert_equal existing_owner, project.owner_record
   end
+
+  test "active? returns false for archived projects" do
+    project = build(:project, repository: { 'archived' => true })
+    assert_not project.active?
+  end
+
+  test "active? returns true for non-archived projects" do
+    project = build(:project, repository: { 'archived' => false })
+    assert project.active?
+  end
+
+  test "active? returns true when repository is nil" do
+    project = build(:project, repository: nil)
+    assert project.active?
+  end
+
+  test "packages_licenses returns empty array when repository is nil" do
+    project = build(:project, repository: nil)
+    assert_equal [], project.packages_licenses
+  end
+
+  test "packages_licenses returns empty array when no packages" do
+    project = build(:project, repository: { 'name' => 'test' })
+    assert_equal [], project.packages_licenses
+  end
+
+  test "packages_licenses returns licenses from packages" do
+    project = build(:project, repository: {
+      'packages' => [
+        { 'license' => 'MIT', 'name' => 'pkg1' },
+        { 'license' => 'Apache-2.0', 'name' => 'pkg2' }
+      ]
+    })
+    assert_equal ['MIT', 'Apache-2.0'], project.packages_licenses
+  end
+
+  test "packages_licenses deduplicates licenses" do
+    project = build(:project, repository: {
+      'packages' => [
+        { 'license' => 'MIT', 'name' => 'pkg1' },
+        { 'license' => 'MIT', 'name' => 'pkg2' }
+      ]
+    })
+    assert_equal ['MIT'], project.packages_licenses
+  end
+
+  test "packages_licenses ignores packages without a license" do
+    project = build(:project, repository: {
+      'packages' => [
+        { 'license' => 'MIT', 'name' => 'pkg1' },
+        { 'name' => 'pkg2' }
+      ]
+    })
+    assert_equal ['MIT'], project.packages_licenses
+  end
+
+  test "open_source_license? returns true when packages have a license" do
+    project = build(:project, repository: {
+      'packages' => [{ 'license' => 'MIT' }]
+    })
+    assert project.open_source_license?
+  end
+
+  test "open_source_license? returns false when no licenses found" do
+    project = build(:project, repository: {})
+    assert_not project.open_source_license?
+  end
 end
